@@ -1,0 +1,174 @@
+﻿@using Microsoft.Ajax.Utilities
+@using SosyalMedya.Models
+@{
+
+
+    int sayi = ViewBag.Id;
+    DatabaseContext db = new DatabaseContext();
+    var mesajKutusuList = db.MesajKutusus.Where(i => i.ProfilNo == sayi || i.MesajıAtan == sayi).OrderByDescending(i => i.Id).DistinctBy(i => new { i.MesajıAtan, i.ProfilNo }).ToList();
+
+    var hesapList = db.Hesabims.ToList();
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<!-- Basic -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<!-- Site Metas -->
+<title>Life Care - Responsive HTML5 Multi Page Template</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content="">
+<!-- Site Icons -->
+<link rel="shortcut icon" href="~/images/fevicon.ico.png" type="image/x-icon" />
+<link rel="apple-touch-icon" href="~/images/apple-touch-icon.png">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="~/css/bootstrap.min.css">
+<!-- Site CSS -->
+<link rel="stylesheet" href="~/style.css">
+<!-- Colors CSS -->
+<link rel="stylesheet" href="~/css/colors.css">
+<!-- ALL VERSION CSS -->
+<link rel="stylesheet" href="~/css/versions.css">
+<!-- Responsive CSS -->
+<link rel="stylesheet" href="~/css/responsive.css">
+<!-- Custom CSS -->
+<link rel="stylesheet" href="~/css/custom.css">
+<!-- Modernizer for Portfolio -->
+<script src="~/js/modernizer.js"></script>
+<!-- [if lt IE 9] -->
+<body class="clinic_version">
+    <!-- LOADER -->
+    <div id="preloader">
+        <img class="preloader" src="~/images/loaders/loading.gif" alt="">
+    </div>
+    <!-- END LOADER -->
+    <header>
+        <div class="header-top wow fadeIn">
+            <div class="container">
+            </div>
+        </div>
+        <div class="header-bottom wow fadeIn">
+            <div class="container">
+                <nav class="main-menu">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"><i class="fa fa-bars" aria-hidden="true"></i></button>
+                    </div>
+
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("PROFİL", "Page", "Page", new { id = @sayi }, null)</li>
+                            <li>@Html.ActionLink("TAKİPÇİLER", "Friends", "Page", new { id = @sayi }, null)</li>
+                            <li>@Html.ActionLink("ANASAYFA", "Anasayfa", "Page", new { id = @sayi }, null)</li>
+                            <li>@Html.ActionLink("GELEN KUTUSU", "Mesaj", "Page", new { id = @sayi }, null)</li>
+                            <li>@Html.ActionLink("ÇIKIŞ YAP", "Index", "Home", new { id = @sayi }, null)</li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div id="about" class="section wow fadeIn">
+        <div class="container">
+            <div class="row">
+                @{ List<string> listedeVarMı = new List<string>();
+                    var list = db.Hesabims.Where(i => i.ProfilNo == sayi).ToList().LastOrDefault();
+                    listedeVarMı.Add(list.KullaniciAdi);
+                }
+
+                @foreach (var MesajItem in mesajKutusuList)
+                {
+                    <div id="mesaj">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="service-widget">
+                                @{
+                                    foreach (var hesap in hesapList)
+                                    {
+                                        MesajKutusu MesajKutusus = null;
+
+
+                                        if (hesap.ProfilNo == @MesajItem.MesajıAtan || hesap.ProfilNo == @MesajItem.ProfilNo)
+                                        {
+                                            //listede yoksa ekrana bastırılcak
+                                            if (listedeVarMı.Contains(hesap.KullaniciAdi))
+                                            {
+                                                // 1 yok 3 listede o yüzden 1in en sonunu getiriyo
+                                            }
+                                            else
+                                            {
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+
+                                                                    <h3>@hesap.KullaniciAdi</h3>
+                                                                    @{
+                                                                        //1 3 
+
+                                                                        if (hesap.ProfilNo == sayi)
+                                                                        {
+                                                                            var listemm = db.MesajKutusus.Where(i => i.MesajıAtan == hesap.ProfilNo).ToList().LastOrDefault();
+                                                                            <div>@listemm.Mesaj</div>
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            var listemm = db.MesajKutusus.Where(i => i.ProfilNo == sayi && i.MesajıAtan == hesap.ProfilNo || i.ProfilNo == hesap.ProfilNo && i.MesajıAtan == sayi).ToList().LastOrDefault();
+                                                                            <div>@listemm.Mesaj </div>
+
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @if (sayi == MesajItem.MesajıAtan)
+                                                    {@Html.ActionLink("Mesajları Gör", "MesajYaz", "Page", new { @id = sayi, @MesajAtan = MesajItem.ProfilNo }, null)}
+                                                else
+                                                { @Html.ActionLink("Mesajları Gör", "MesajYaz", "Page", new { @id = sayi, @MesajAtan = MesajItem.MesajıAtan }, null)}
+                                                </div>
+                                                listedeVarMı.Add(hesap.KullaniciAdi);
+                                            }
+                                        }
+                                    }
+
+                                }
+
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </div>
+        <!-- end container -->
+    </div>
+    <!-- doctor -->
+    <div class="copyright-area wow fadeIn"  style="position: absolute; left:0; bottom:0;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="footer-text">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end copyrights -->
+    <a href="#home" data-scroll class="dmtop global-radius"><i class="fa fa-angle-up"></i></a>
+    <!-- all js files -->
+    <script src="~/js/all.js"></script>
+    <!-- all plugins -->
+    <script src="~/js/custom.js"></script>
+    <!-- map -->
+    <script src="~/https://maps.googleapis.com/maps/api/js?key=AIzaSyCNUPWkb4Cjd7Wxo-T4uoUldFjoiUA1fJc&callback=myMap"></script>
+</body>
+</html>

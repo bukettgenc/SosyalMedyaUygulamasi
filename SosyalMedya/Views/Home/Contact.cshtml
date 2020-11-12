@@ -1,0 +1,31 @@
+﻿
+<script src="~/Scripts/jquery-3.4.1.slim.js"></script>
+
+<div>
+    <input type="text" id="kisiId" />
+    <input type="submit" id="listele" />
+    <p><strong id="kisiAdi"></strong></p>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#listele").click(function () {
+            var Id = $("#kisiId").val();
+            $.ajax({
+                url: '/Home/Listele/' + Id,
+                type: 'POST',
+                datatype: 'json',
+                success: function (data) {
+                    $('#kisiAdi').html(data.ProfilYazilari);
+                }
+            });
+        })
+    })
+
+</script>
+
+<script src="~/js/all.js"></script>
+<!-- all plugins -->
+<script src="~/js/custom.js"></script>
+<!-- map -->
+<script src="~/https://maps.googleapis.com/maps/api/js?key=AIzaSyCNUPWkb4Cjd7Wxo-T4uoUldFjoiUA1fJc&callback=myMap"></script>
+<script src="~/js/modernizer.js"></script>
